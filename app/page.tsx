@@ -26,7 +26,7 @@ interface ContactCardProps {
   value: string;
 }
 
-export default function EpixLabsPage(): JSX.Element {
+export default function EpixLabsPage() {
   // Animation variants
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -66,8 +66,12 @@ export default function EpixLabsPage(): JSX.Element {
         className="flex items-center justify-between px-8 py-4 shadow-sm bg-white/80 backdrop-blur-md sticky top-0 z-20"
       >
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-green-300">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-extrabold text-2xl hover:scale-105 transition-transform duration-200"
+          >
+            <Car className="h-7 w-7 text-emerald-600 animate-bounce" />
+            <span className="bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent drop-shadow-sm">
               EpixLabs
             </span>
           </Link>
@@ -186,7 +190,7 @@ export default function EpixLabsPage(): JSX.Element {
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
               <motion.div
-                key={index}
+                key={`service-${index}`}
                 variants={fadeInUp}
                 custom={index + 1}
                 whileHover={{
@@ -221,7 +225,7 @@ export default function EpixLabsPage(): JSX.Element {
         >
           <h2 className="text-3xl font-bold text-slate-900">Get in Touch</h2>
           <p className="text-slate-700">
-            Have a project or idea? Let`s build something together.
+            Have a project or idea? Let's build something together.
           </p>
           <div className="mt-8 grid gap-6 sm:grid-cols-3 text-left">
             <ContactCard
@@ -257,7 +261,7 @@ export default function EpixLabsPage(): JSX.Element {
   );
 }
 
-function ContactCard({ icon, title, value }: ContactCardProps): JSX.Element {
+function ContactCard({ icon, title, value }: ContactCardProps) {
   return (
     <motion.div
       whileHover={{
