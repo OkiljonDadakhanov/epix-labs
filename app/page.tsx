@@ -225,7 +225,7 @@ export default function EpixLabsPage() {
         >
           <h2 className="text-3xl font-bold text-slate-900">Get in Touch</h2>
           <p className="text-slate-700">
-            Have a project or idea? Let's build something together.
+            Have a project or idea? Let`s build something together.
           </p>
           <div className="mt-8 grid gap-6 sm:grid-cols-3 text-left">
             <ContactCard
