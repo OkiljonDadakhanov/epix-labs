@@ -2,7 +2,6 @@
 import React from "react";
 import Image from "next/image";
 import { Mail, Phone, MapPin, Car } from "lucide-react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 // Smooth scroll for anchor links
@@ -27,20 +26,6 @@ interface ContactCardProps {
 }
 
 export default function EpixLabsPage() {
-  // Animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: (i: number = 1) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.15,
-        duration: 0.7,
-        ease: "easeOut",
-      },
-    }),
-  };
-
   const services: ServiceItem[] = [
     {
       title: "Web Development",
@@ -59,12 +44,7 @@ export default function EpixLabsPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-slate-50">
       {/* Header */}
-      <motion.header
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="flex items-center justify-between px-8 py-4 shadow-sm bg-white/80 backdrop-blur-md sticky top-0 z-20"
-      >
+      <header className="flex items-center justify-between px-8 py-4 shadow-sm bg-white/80 backdrop-blur-md sticky top-0 z-20">
         <div className="flex items-center gap-2">
           <Link
             href="/"
@@ -99,21 +79,11 @@ export default function EpixLabsPage() {
         >
           Get in Touch
         </a>
-      </motion.header>
+      </header>
 
       {/* Hero */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
-        variants={fadeInUp}
-        className="relative flex flex-col-reverse md:flex-row items-center justify-between px-8 lg:px-20 py-20 gap-10"
-      >
-        <motion.div
-          variants={fadeInUp}
-          custom={1}
-          className="max-w-2xl space-y-6"
-        >
+      <section className="relative flex flex-col-reverse md:flex-row items-center justify-between px-8 lg:px-20 py-20 gap-10">
+        <div className="max-w-2xl space-y-6 animate-fade-in-up">
           <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
             Building Digital Solutions with{" "}
             <span className="text-emerald-600">Impact</span>
@@ -138,8 +108,8 @@ export default function EpixLabsPage() {
               Contact Us
             </a>
           </div>
-        </motion.div>
-        <motion.div variants={fadeInUp} custom={2} className="w-full max-w-md">
+        </div>
+        <div className="w-full max-w-md animate-fade-in-up-delay">
           <Image
             src="/company.jpg"
             alt="EpixLabs Office"
@@ -148,23 +118,12 @@ export default function EpixLabsPage() {
             className="rounded-xl shadow-lg"
             priority
           />
-        </motion.div>
-      </motion.section>
+        </div>
+      </section>
 
       {/* About */}
-      <motion.section
-        id="about"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
-        variants={fadeInUp}
-        className="px-8 lg:px-20 py-16 bg-white"
-      >
-        <motion.div
-          variants={fadeInUp}
-          custom={1}
-          className="max-w-4xl mx-auto space-y-4 text-center"
-        >
+      <section id="about" className="px-8 lg:px-20 py-16 bg-white">
+        <div className="max-w-4xl mx-auto space-y-4 text-center">
           <h2 className="text-3xl font-bold text-slate-900">About EpixLabs</h2>
           <p className="text-slate-700 leading-relaxed">
             Founded with a vision to bridge technology and business, EpixLabs
@@ -173,56 +132,35 @@ export default function EpixLabsPage() {
             cloud infrastructure. We prioritize clean design, scalable systems,
             and impactful results.
           </p>
-        </motion.div>
-      </motion.section>
+        </div>
+      </section>
 
       {/* Services */}
-      <motion.section
+      <section
         id="services"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
-        variants={fadeInUp}
         className="px-8 lg:px-20 py-16 bg-gradient-to-b from-slate-50 to-white"
       >
         <div className="max-w-5xl mx-auto space-y-10 text-center">
           <h2 className="text-3xl font-bold text-slate-900">What We Do</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <motion.div
+              <div
                 key={`service-${index}`}
-                variants={fadeInUp}
-                custom={index + 1}
-                whileHover={{
-                  scale: 1.05,
-                  boxShadow: "0 8px 32px 0 rgba(16, 185, 129, 0.10)",
-                }}
-                className="rounded-xl border border-slate-200 bg-white/80 shadow-sm p-6 hover:shadow-lg transition-all cursor-pointer"
+                className="rounded-xl border border-slate-200 bg-white/80 shadow-sm p-6 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer"
               >
                 <h3 className="text-lg font-semibold text-slate-900">
                   {service.title}
                 </h3>
                 <p className="text-slate-600 mt-2">{service.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Contact */}
-      <motion.section
-        id="contact"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
-        variants={fadeInUp}
-        className="px-8 lg:px-20 py-16 bg-white"
-      >
-        <motion.div
-          variants={fadeInUp}
-          custom={1}
-          className="max-w-4xl mx-auto text-center space-y-6"
-        >
+      <section id="contact" className="px-8 lg:px-20 py-16 bg-white">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
           <h2 className="text-3xl font-bold text-slate-900">Get in Touch</h2>
           <p className="text-slate-700">
             Have a project or idea? Let`s build something together.
@@ -244,37 +182,46 @@ export default function EpixLabsPage() {
               value="Tashkent, Uzbekistan"
             />
           </div>
-        </motion.div>
-      </motion.section>
+        </div>
+      </section>
 
       {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="px-8 lg:px-20 py-6 bg-slate-900 text-slate-300 text-center"
-      >
+      <footer className="px-8 lg:px-20 py-6 bg-slate-900 text-slate-300 text-center">
         <p>© {new Date().getFullYear()} EpixLabs. All rights reserved.</p>
-      </motion.footer>
+      </footer>
+
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 0.7s ease-out;
+        }
+
+        .animate-fade-in-up-delay {
+          animation: fadeInUp 0.7s ease-out 0.2s both;
+        }
+      `}</style>
     </main>
   );
 }
 
 function ContactCard({ icon, title, value }: ContactCardProps) {
   return (
-    <motion.div
-      whileHover={{
-        scale: 1.04,
-        boxShadow: "0 8px 32px 0 rgba(16, 185, 129, 0.10)",
-      }}
-      className="rounded-xl border border-slate-200 bg-slate-50 p-6 flex flex-col items-start gap-2 transition-all cursor-pointer"
-    >
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 flex flex-col items-start gap-2 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-lg">
       <div className="flex items-center gap-2">
         {icon}
         <h3 className="font-semibold text-slate-900">{title}</h3>
       </div>
       <p className="text-slate-700">{value}</p>
-    </motion.div>
+    </div>
   );
 }
