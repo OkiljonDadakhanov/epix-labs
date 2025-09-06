@@ -542,9 +542,9 @@ export default function EpixLabsBrandSite() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#0FE7A8] px-5 py-3 text-sm font-semibold text-[#001334] transition hover:opacity-90 disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#0FE7A8] px-5 py-3 text-sm font-semibold text-[#001334] transition hover:opacity-90 disabled:opacity-60 cursor-pointer"
                   >
-                    <Send className="h-4 w-4" />
+                    <Send className="h-4 w-4 " />
                     {submitting ? "Sending..." : "Send Request"}
                   </button>
                 </div>
