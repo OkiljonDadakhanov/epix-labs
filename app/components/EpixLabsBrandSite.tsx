@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import AOS from "aos";
+import "aos/dist/aos.css";
 import {
   Menu,
   Mail,
@@ -13,15 +16,70 @@ import {
   ServerCog,
   Rocket,
   Briefcase,
+  Send,
 } from "lucide-react";
 
-/**
- * EpixLabs brand-aligned single-page site
- * Brand colors: mint #0FE7A8, navy #001334, white #FFFFFF
- * Brand font: Coolvetica (loaded via @font-face below)
- */
-
 export default function EpixLabsBrandSite() {
+  // ---- Smooth scroll (CSS) + AOS ----
+  useEffect(() => {
+    // Smooth scroll (no need for polyfill)
+    document.documentElement.style.scrollBehavior = "smooth";
+    // AOS animations
+    AOS.init({ duration: 750, once: true, easing: "ease-out-quart" });
+  }, []);
+
+  // ---- Form state / validation ----
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const onChange = (key: keyof typeof form, value: string) => {
+    setForm((p) => ({ ...p, [key]: value }));
+    setErrors((e) => ({ ...e, [key]: "" }));
+  };
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!form.name.trim()) e.name = "Please enter your name";
+    if (!form.email.trim()) e.email = "Please enter your email";
+    if (!form.message.trim()) e.message = "Please enter a short message";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!validate()) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setSent(true);
+        setForm({ name: "", email: "", phone: "", company: "", message: "" });
+        setTimeout(() => setSent(false), 3500);
+      } else {
+        alert("Failed to send. Please try again.");
+      }
+    } catch {
+      alert("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // ---- Content ----
   const services: { title: string; desc: string; icon: React.ReactNode }[] = [
     {
       title: "Web Development",
@@ -64,9 +122,8 @@ export default function EpixLabsBrandSite() {
             className="group flex items-center gap-3"
             aria-label="EpixLabs Home"
           >
-            {/* Ensure public/logo.png exists */}
             <Image
-              src="/union.png"
+              src="/union.png" // make sure this file exists in /public
               alt="EpixLabs Logo"
               width={36}
               height={36}
@@ -112,9 +169,12 @@ export default function EpixLabsBrandSite() {
       </header>
 
       {/* Hero */}
-      <section id="home" className="relative overflow-hidden">
+      <section id="home" className="relative overflow-hidden scroll-mt-24">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_10%_-10%,rgba(15,231,168,0.18),transparent_60%),linear-gradient(180deg,#f8fafc,white)]" />
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-24 lg:px-8">
+        <div
+          className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-24 lg:px-8"
+          data-aos="fade-up"
+        >
           <div className="space-y-6">
             <p className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm">
               <CheckCircle2 className="h-4 w-4 text-[#0FE7A8]" />
@@ -129,18 +189,18 @@ export default function EpixLabsBrandSite() {
               speed and care.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link
+              <a
                 href="#services"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#001334] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-95"
               >
                 Explore Services <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
+              </a>
+              <a
                 href="#work"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
               >
                 Our Work
-              </Link>
+              </a>
             </div>
             <ul className="mt-6 grid w-full grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-4">
               {[
@@ -160,7 +220,7 @@ export default function EpixLabsBrandSite() {
             </ul>
           </div>
 
-          <div className="relative">
+          <div className="relative" data-aos="fade-left" data-aos-delay="150">
             <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
               <Image
                 src="/company.jpg"
@@ -181,8 +241,11 @@ export default function EpixLabsBrandSite() {
       </section>
 
       {/* Services */}
-      <section id="services" className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section id="services" className="bg-white py-16 sm:py-20 scroll-mt-24">
+        <div
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+          data-aos="fade-up"
+        >
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl [font-family:var(--font-brand,inherit)]">
               What we do
@@ -193,10 +256,12 @@ export default function EpixLabsBrandSite() {
           </div>
 
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s) => (
+            {services.map((s, i) => (
               <div
                 key={s.title}
                 className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ring-1 ring-transparent transition hover:shadow-md hover:ring-[#0FE7A8]/30"
+                data-aos="zoom-in-up"
+                data-aos-delay={i * 80}
               >
                 <div className="flex items-center gap-3 text-[#001334]">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#0FE7A8]/15 text-[#001334]">
@@ -207,14 +272,10 @@ export default function EpixLabsBrandSite() {
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">
                   {s.desc}
                 </p>
-                {/* <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#001334]">
-                  Learn more <ArrowRight className="h-4 w-4" />
-                </div> */}
               </div>
             ))}
           </div>
 
-          {/* Tech badges */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold">
             {[
               "Next.js",
@@ -223,10 +284,12 @@ export default function EpixLabsBrandSite() {
               "PostgreSQL",
               "Docker",
               "AWS",
-            ].map((t) => (
+            ].map((t, i) => (
               <span
                 key={t}
                 className="rounded-full border border-slate-200 bg-white px-3 py-1 text-slate-700 shadow-sm"
+                data-aos="fade-up"
+                data-aos-delay={200 + i * 70}
               >
                 {t}
               </span>
@@ -236,8 +299,11 @@ export default function EpixLabsBrandSite() {
       </section>
 
       {/* Work */}
-      <section id="work" className="bg-slate-50 py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section id="work" className="bg-slate-50 py-16 sm:py-20 scroll-mt-24">
+        <div
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+          data-aos="fade-up"
+        >
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl [font-family:var(--font-brand,inherit)]">
               Selected work
@@ -247,11 +313,13 @@ export default function EpixLabsBrandSite() {
             </p>
           </div>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {caseStudies.map((c) => (
+            {caseStudies.map((c, i) => (
               <Link
                 key={c.title}
                 href={c.href}
                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                data-aos="fade-up"
+                data-aos-delay={i * 120}
               >
                 <div className="relative">
                   <Image
@@ -283,10 +351,13 @@ export default function EpixLabsBrandSite() {
       {/* About */}
       <section
         id="about"
-        className="relative overflow-hidden bg-[#001334] py-16 text-white sm:py-20"
+        className="relative overflow-hidden bg-[#001334] py-16 text-white sm:py-20 scroll-mt-24"
       >
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(900px_500px_at_85%_20%,rgba(15,231,168,0.18),transparent_60%)]" />
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
+        <div
+          className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8"
+          data-aos="fade-up"
+        >
           <div>
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl [font-family:var(--font-brand,inherit)]">
               About EpixLabs
@@ -302,8 +373,13 @@ export default function EpixLabsBrandSite() {
                 "Architecture",
                 "Delivery speed",
                 "Observability",
-              ].map((i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
+              ].map((i, idx) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-2 text-sm"
+                  data-aos="fade-right"
+                  data-aos-delay={idx * 90}
+                >
                   <span className="grid h-6 w-6 place-items-center rounded-full bg-[#0FE7A8]/20 text-[#0FE7A8]">
                     <CheckCircle2 className="h-4 w-4" />
                   </span>
@@ -312,7 +388,7 @@ export default function EpixLabsBrandSite() {
               ))}
             </ul>
           </div>
-          <div className="relative">
+          <div className="relative" data-aos="zoom-in">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
               <div className="grid grid-cols-2 gap-4 text-center">
                 {[
@@ -320,10 +396,12 @@ export default function EpixLabsBrandSite() {
                   ["<2w", "MVP launch"],
                   ["24/7", "Support"],
                   ["NDA", "Friendly"],
-                ].map(([n, l]) => (
+                ].map(([n, l], i) => (
                   <div
                     key={l}
                     className="rounded-xl border border-white/10 bg-white/5 p-4"
+                    data-aos="fade-up"
+                    data-aos-delay={i * 110}
                   >
                     <div className="text-lg font-bold">{n}</div>
                     <div className="text-xs text-slate-200">{l}</div>
@@ -336,8 +414,11 @@ export default function EpixLabsBrandSite() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="bg-white py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section id="contact" className="bg-white py-16 sm:py-20 scroll-mt-24">
+        <div
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+          data-aos="fade-up"
+        >
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl [font-family:var(--font-brand,inherit)]">
               Let’s build something
@@ -369,45 +450,106 @@ export default function EpixLabsBrandSite() {
           </div>
 
           <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <form className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <label className="text-sm">
-                <span className="mb-1 block font-semibold text-slate-800">
-                  Name
-                </span>
-                <input
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#0FE7A8]"
-                  placeholder="Your name"
-                />
-              </label>
-              <label className="text-sm">
-                <span className="mb-1 block font-semibold text-slate-800">
-                  Email
-                </span>
-                <input
-                  type="email"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#0FE7A8]"
-                  placeholder="you@example.com"
-                />
-              </label>
-              <label className="col-span-full text-sm">
-                <span className="mb-1 block font-semibold text-slate-800">
-                  Project Brief
-                </span>
-                <textarea
-                  rows={4}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-[#0FE7A8]"
-                  placeholder="A few sentences about your project..."
-                />
-              </label>
-              <div className="col-span-full">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#0FE7A8] px-5 py-3 text-sm font-semibold text-[#001334] transition hover:opacity-90"
-                >
-                  Send Request <ArrowRight className="h-4 w-4" />
-                </button>
+            {sent ? (
+              <div className="py-10 text-center text-emerald-600 font-semibold animate-pulse">
+                ✅ Message sent. We’ll get back to you soon!
               </div>
-            </form>
+            ) : (
+              <form
+                onSubmit={submit}
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2"
+              >
+                <label className="text-sm">
+                  <span className="mb-1 block font-semibold text-slate-800">
+                    Name
+                  </span>
+                  <input
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-[#0FE7A8] ${
+                      errors.name ? "border-red-500" : "border-slate-300"
+                    }`}
+                    placeholder="Your name"
+                    value={form.name}
+                    onChange={(e) => onChange("name", e.target.value)}
+                  />
+                  {errors.name && (
+                    <span className="text-xs text-red-500">{errors.name}</span>
+                  )}
+                </label>
+
+                <label className="text-sm">
+                  <span className="mb-1 block font-semibold text-slate-800">
+                    Email
+                  </span>
+                  <input
+                    type="email"
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-[#0FE7A8] ${
+                      errors.email ? "border-red-500" : "border-slate-300"
+                    }`}
+                    placeholder="you@example.com"
+                    value={form.email}
+                    onChange={(e) => onChange("email", e.target.value)}
+                  />
+                  {errors.email && (
+                    <span className="text-xs text-red-500">{errors.email}</span>
+                  )}
+                </label>
+
+                <label className="text-sm">
+                  <span className="mb-1 block font-semibold text-slate-800">
+                    Phone
+                  </span>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[#0FE7A8]"
+                    placeholder="+998 90 123 45 67"
+                    value={form.phone}
+                    onChange={(e) => onChange("phone", e.target.value)}
+                  />
+                </label>
+
+                <label className="text-sm">
+                  <span className="mb-1 block font-semibold text-slate-800">
+                    Company
+                  </span>
+                  <input
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-[#0FE7A8]"
+                    placeholder="Company (optional)"
+                    value={form.company}
+                    onChange={(e) => onChange("company", e.target.value)}
+                  />
+                </label>
+
+                <label className="col-span-full text-sm">
+                  <span className="mb-1 block font-semibold text-slate-800">
+                    Project Brief
+                  </span>
+                  <textarea
+                    rows={4}
+                    className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:border-[#0FE7A8] ${
+                      errors.message ? "border-red-500" : "border-slate-300"
+                    }`}
+                    placeholder="A few sentences about your project..."
+                    value={form.message}
+                    onChange={(e) => onChange("message", e.target.value)}
+                  />
+                  {errors.message && (
+                    <span className="text-xs text-red-500">
+                      {errors.message}
+                    </span>
+                  )}
+                </label>
+
+                <div className="col-span-full">
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#0FE7A8] px-5 py-3 text-sm font-semibold text-[#001334] transition hover:opacity-90 disabled:opacity-60"
+                  >
+                    <Send className="h-4 w-4" />
+                    {submitting ? "Sending..." : "Send Request"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </section>
@@ -439,7 +581,6 @@ export default function EpixLabsBrandSite() {
           --brand-mint: #0fe7a8;
           --brand-navy: #001334;
         }
-        /* Load Coolvetica locally (place files under public/fonts) */
         @font-face {
           font-family: "Coolvetica";
           src: url("/fonts/Coolvetica.woff2") format("woff2");
@@ -469,7 +610,10 @@ function ContactCard({
   href?: string;
 }) {
   const content = (
-    <div className="flex h-full flex-col items-start gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-6 transition hover:shadow-md">
+    <div
+      className="flex h-full flex-col items-start gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-6 transition hover:shadow-md"
+      data-aos="fade-up"
+    >
       <div className="flex items-center gap-2 text-[#001334]">
         <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#0FE7A8]/20 text-[#001334]">
           {icon}
