@@ -49,7 +49,7 @@ export default function EpixLabsBrandSite() {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Please enter your name";
     if (!form.email.trim()) e.email = "Please enter your email";
-    if (!form.message.trim()) e.message = "Please enter a short message";
+    if (!form.message.trim()) e.message = "Please enter a short message describing your project";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
