@@ -47,22 +47,10 @@ export default function EpixLabsBrandSite() {
     href: string;
   }[] = [
     {
-      title: "University Portal",
-      tag: "Next.js · Postgres · Docker",
-      img: "/brand/case-uni.jpg",
-      href: "#contact",
-    },
-    {
-      title: "Finance & Health Buddy",
-      tag: "RN · Expo · SQLite",
-      img: "/brand/case-qopchiq.jpg",
-      href: "#contact",
-    },
-    {
-      title: "Olympiad Platform",
-      tag: "Next.js · Redis · S3",
-      img: "/brand/case-olymp.jpg",
-      href: "#contact",
+      title: "EpixRent - Car Rental Service",
+      tag: "Next.js · Postgres · Docker · AWS CDK · DevOps",
+      img: "/car.jpg",
+      href: "https://info.epixrent.uz/",
     },
   ];
 
@@ -156,9 +144,9 @@ export default function EpixLabsBrandSite() {
             </div>
             <ul className="mt-6 grid w-full grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-4">
               {[
-                ["25+", "Projects"],
-                ["10+", "Partners"],
-                ["99.9%", "Uptime"],
+                ["5+", "Projects"],
+                ["3+", "Partners"],
+                ["90%", "Uptime"],
                 ["<200ms", "TTFB"],
               ].map(([n, label]) => (
                 <li
@@ -219,9 +207,9 @@ export default function EpixLabsBrandSite() {
                 <p className="mt-3 text-sm leading-relaxed text-slate-700">
                   {s.desc}
                 </p>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#001334]">
+                {/* <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#001334]">
                   Learn more <ArrowRight className="h-4 w-4" />
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
