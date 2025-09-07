@@ -7,6 +7,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import {
   Menu,
+  X,
   Mail,
   Phone,
   MapPin,
@@ -17,16 +18,28 @@ import {
   Rocket,
   Briefcase,
   Send,
+  Linkedin,
 } from "lucide-react";
 
 export default function EpixLabsBrandSite() {
   // ---- Smooth scroll (CSS) + AOS ----
   useEffect(() => {
-    // Smooth scroll (no need for polyfill)
     document.documentElement.style.scrollBehavior = "smooth";
-    // AOS animations
     AOS.init({ duration: 750, once: true, easing: "ease-out-quart" });
   }, []);
+
+  // ---- Mobile menu ----
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const toggleMobile = () => setMobileOpen((s) => !s);
+  const closeMobile = () => setMobileOpen(false);
+
+  // Lock background scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   // ---- Form state / validation ----
   const [form, setForm] = useState({
@@ -49,7 +62,8 @@ export default function EpixLabsBrandSite() {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Please enter your name";
     if (!form.email.trim()) e.email = "Please enter your email";
-    if (!form.message.trim()) e.message = "Please enter a short message describing your project";
+    if (!form.message.trim())
+      e.message = "Please enter a short message describing your project";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -98,6 +112,7 @@ export default function EpixLabsBrandSite() {
     },
   ];
 
+  // PROJECTS (keeps #work)
   const caseStudies: {
     title: string;
     tag: string;
@@ -110,6 +125,47 @@ export default function EpixLabsBrandSite() {
       img: "/car.jpg",
       href: "https://info.epixrent.uz/",
     },
+    // add more projects here...
+  ];
+
+  // TEAM (separate #team section)
+  const teamMembers: {
+    name: string;
+    title: string;
+    bio: string;
+    img: string; // put images in /public/team/...
+    linkedin?: string;
+    objectPosition?: string;
+  }[] = [
+    {
+      name: "Jamshidbek Najimiddinov",
+      title: "CEO & Founder",
+      bio: "Jamshidbek leads Epix Labs’ vision and growth. He focuses on business strategy, partnerships, and guiding the team toward success.",
+      img: "/team/jamshidbek.jpg",
+      objectPosition: "50% 25%",
+
+      linkedin:
+        "https://www.linkedin.com/in/jamshidbek-najimiddinov-665ab9250/",
+    },
+    {
+      name: "Diyorbek Majidov",
+      title: "Co-Founder & Data Software Engineer",
+      bio: "Diyorbek builds and maintains Epix Labs’ backend systems. With expertise in data processing and integration, he ensures reliable and scalable platform operations.",
+      img: "/team/diyorbek.jpg",
+      objectPosition: "50% 25%",
+
+      linkedin:
+        "https://www.linkedin.com/in/diyorbek-majidov?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=",
+    },
+    {
+      name: "Okiljon Dadakhonov ",
+      title: "Front end Engineer",
+      bio: "Okiljon crafts seamless and responsive user experiences at Epix Labs. With a focus on modern web technologies, he transforms ideas into intuitive and scalable interfaces.",
+      img: "/team/akilhan.jpg",
+      objectPosition: "80% 20%",
+
+      linkedin: "https://www.linkedin.com/in/okiljon-dadakhanov/",
+    },
   ];
 
   return (
@@ -121,9 +177,10 @@ export default function EpixLabsBrandSite() {
             href="#home"
             className="group flex items-center gap-3"
             aria-label="EpixLabs Home"
+            onClick={closeMobile}
           >
             <Image
-              src="/union.png" // make sure this file exists in /public
+              src="/union.png"
               alt="EpixLabs Logo"
               width={36}
               height={36}
@@ -136,12 +193,16 @@ export default function EpixLabsBrandSite() {
             </span>
           </Link>
 
+          {/* Desktop nav */}
           <nav className="hidden items-center gap-8 text-sm font-medium text-slate-700 md:flex">
             <a href="#services" className="hover:text-[#001334]">
               Services
             </a>
             <a href="#work" className="hover:text-[#001334]">
               Work
+            </a>
+            <a href="#team" className="hover:text-[#001334]">
+              Team
             </a>
             <a href="#about" className="hover:text-[#001334]">
               About
@@ -151,6 +212,7 @@ export default function EpixLabsBrandSite() {
             </a>
           </nav>
 
+          {/* CTA + Hamburger */}
           <div className="flex items-center gap-3">
             <Link
               href="#contact"
@@ -158,13 +220,74 @@ export default function EpixLabsBrandSite() {
             >
               Start a Project
             </Link>
+
             <button
               className="inline-flex items-center rounded-xl border border-slate-300 p-2 md:hidden"
-              aria-label="Open menu"
+              aria-label="Toggle menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+              onClick={toggleMobile}
             >
-              <Menu className="h-5 w-5" />
+              {mobileOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
+        </div>
+
+        {/* Mobile dropdown (slide-down) */}
+        <div
+          id="mobile-menu"
+          className={`md:hidden transition-[max-height,opacity] duration-300 ease-out overflow-hidden ${
+            mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <nav className="mx-4 mb-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <a
+              href="#services"
+              className="block rounded-lg px-3 py-2 text-slate-800 hover:bg-slate-50"
+              onClick={closeMobile}
+            >
+              Services
+            </a>
+            <a
+              href="#work"
+              className="block rounded-lg px-3 py-2 text-slate-800 hover:bg-slate-50"
+              onClick={closeMobile}
+            >
+              Work
+            </a>
+            <a
+              href="#team"
+              className="block rounded-lg px-3 py-2 text-slate-800 hover:bg-slate-50"
+              onClick={closeMobile}
+            >
+              Team
+            </a>
+            <a
+              href="#about"
+              className="block rounded-lg px-3 py-2 text-slate-800 hover:bg-slate-50"
+              onClick={closeMobile}
+            >
+              About
+            </a>
+            <a
+              href="#contact"
+              className="block rounded-lg px-3 py-2 text-slate-800 hover:bg-slate-50"
+              onClick={closeMobile}
+            >
+              Contact
+            </a>
+            <Link
+              href="#contact"
+              onClick={closeMobile}
+              className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#001334] px-4 py-2 text-sm font-semibold text-white"
+            >
+              Start a Project
+            </Link>
+          </nav>
         </div>
       </header>
 
@@ -199,14 +322,14 @@ export default function EpixLabsBrandSite() {
                 href="#work"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50"
               >
-                Our Work
+                Our Projects
               </a>
             </div>
             <ul className="mt-6 grid w-full grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-4">
               {[
                 ["5+", "Projects"],
                 ["3+", "Partners"],
-                ["90%", "Uptime"],
+                ["99.9%", "Uptime"],
                 ["<200ms", "TTFB"],
               ].map(([n, label]) => (
                 <li
@@ -298,7 +421,7 @@ export default function EpixLabsBrandSite() {
         </div>
       </section>
 
-      {/* Work */}
+      {/* Work (Projects) — KEEPING #work */}
       <section id="work" className="bg-slate-50 py-16 sm:py-20 scroll-mt-24">
         <div
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
@@ -343,6 +466,78 @@ export default function EpixLabsBrandSite() {
                   </div>
                 </div>
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team (NEW) */}
+      {/* TEAM (replace your whole #team section with this) */}
+      <section id="team" className="bg-white py-16 sm:py-20 scroll-mt-24">
+        <div
+          className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+          data-aos="fade-up"
+        >
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl [font-family:var(--font-brand,inherit)]">
+              Our Team
+            </h2>
+            <p className="mt-3 text-slate-700">
+              The people behind EpixLabs—builders with product taste and
+              engineering depth.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {teamMembers.map((m, i) => (
+              <div
+                key={m.name}
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                data-aos="fade-up"
+                data-aos-delay={i * 120}
+              >
+                {/* Image wrapper with stable aspect & focus control */}
+                <div className="relative overflow-hidden rounded-b-none">
+                  <div className="relative aspect-[4/3] lg:aspect-[16/9]">
+                    <Image
+                      src={m.img}
+                      alt={m.name}
+                      fill
+                      priority={i < 3}
+                      sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      style={{ objectPosition: m.objectPosition ?? "50% 35%" }}
+                    />
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/40 via-black/15 to-transparent" />
+                    <div className="absolute left-3 top-3 rounded-md bg-[#001334] px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      {m.title}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Text */}
+                <div className="p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-[#001334]">
+                      <Briefcase className="h-4 w-4" />
+                      <h3 className="text-base font-semibold">{m.name}</h3>
+                    </div>
+                    {m.linkedin && (
+                      <Link
+                        href={m.linkedin}
+                        target="_blank"
+                        className="inline-flex items-center justify-center rounded-md border border-slate-200 p-2 text-slate-700 hover:bg-slate-50"
+                        aria-label={`${m.name} on LinkedIn`}
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </Link>
+                    )}
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-700">
+                    {m.bio}
+                  </p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -404,7 +599,7 @@ export default function EpixLabsBrandSite() {
                     data-aos-delay={i * 110}
                   >
                     <div className="text-lg font-bold">{n}</div>
-                    <div className="text-xs text-slate-200">{l}</div>
+                    <div className="text-xs text-slate-2 00">{l}</div>
                   </div>
                 ))}
               </div>
@@ -564,6 +759,9 @@ export default function EpixLabsBrandSite() {
             </a>
             <a href="#work" className="hover:text-slate-900">
               Work
+            </a>
+            <a href="#team" className="hover:text-slate-900">
+              Team
             </a>
             <a href="#about" className="hover:text-slate-900">
               About
